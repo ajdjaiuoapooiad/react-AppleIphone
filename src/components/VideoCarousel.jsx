@@ -132,6 +132,11 @@ const VideoCarousel = () => {
                     setVideo((pre) => ({...pre,isLastVideo: false,
                         videoId: 0}));
                 break;
+                
+            case "pause":
+                setVideo((pre) => ({ ...pre, isPlaying: !pre.isPlaying }));
+                break;
+
             case 'play':
                 setVideo((pre) => ({...pre,isPlaying: !pre.isPlaying}));
             break;
@@ -159,6 +164,10 @@ const VideoCarousel = () => {
                                 <video id="video" 
                                     playsInline={true} 
                                     preload='auto' 
+                                    className={`${
+                                        list.id === 2 && "translate-x-44"
+                                      } pointer-events-none`}
+                            
                                     muted
                                 // 追加--------------------
                                     ref = {(el) => (videoRef.current[i] = el)}
