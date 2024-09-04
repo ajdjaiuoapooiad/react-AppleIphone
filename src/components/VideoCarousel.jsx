@@ -1,8 +1,11 @@
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import { useEffect, useRef, useState} from 'react'
-import {hightlightsSlides} from '../constants'
-import { pauseImg, playImg, replayImg } from '../utils';
+import { ScrollTrigger } from "gsap/all";
+gsap.registerPlugin(ScrollTrigger);
+import { useEffect, useRef, useState } from "react";
+
+import { hightlightsSlides } from "../constants";
+import { pauseImg, playImg, replayImg } from "../utils";
 
 
 const VideoCarousel = () => {
@@ -17,27 +20,27 @@ const VideoCarousel = () => {
         videoId: 0,
         isLastvideo: false,
         isPlaying: false, 
-    })
+    });
     const [loadedData,setLoadedData] = useState([]);
     const {isEnd,startPlay,videoId,isLastvideo,isPlaying} = video;
 
     
     useGSAP(() => {
-        gsap.to('#video',{
-            scrollTrigger: {
-                trigger: '#video',
-                toggleActions: 'restart none none none'
-            },
-            onComplete: () => {
-                setVideo((pre) => ({
-                    ...pre,
-                    startPlay: true,
-                    isPlaying: true,
-                     
-                }))
-            }
-        })
-    },[isEnd,videoId ])
+         // video animation to play the video when it is in the view
+    gsap.to("#video", {
+        scrollTrigger: {
+          trigger: "#video",
+          toggleActions: "restart none none none",
+        },
+        onComplete: () => {
+          setVideo((pre) => ({
+            ...pre,
+            startPlay: true,
+            isPlaying: true,
+          }));
+        },
+      });
+    }, [isEnd, videoId]);
 
     useEffect(() => {
         if(loadedData.length > 3){
@@ -52,46 +55,50 @@ const VideoCarousel = () => {
     const handleLoadedMetadata = (i,e) => setLoadedData((pre) => [...pre,e]);
 
     useEffect(() => {
-        const currentProgress = 0;
+        let currentProgress = 0;
         let span = videoSpanRef.current;
+    
 
-        if(span[videoId]){
-            // animate the progress of the video
-            let anim = gsap.to(span[videoId],{
+        if (span[videoId]) {
+            // animation to move the indicator
+            let anim = gsap.to(span[videoId], {
                 onUpdate: () => {
+                    // get the progress of the video
                     const progress = Math.ceil(anim.progress() * 100);
 
-                    if(progress != currentProgress){
+                    if (progress != currentProgress) {
                         currentProgress = progress;
+
                         gsap.to(videoDivRef.current[videoId],{
                             width: window.innerWidth < 760? '10vw': '4vw'
-                        })
+                        });
 
                         gsap.to(span[videoId],{
                             width: `${currentProgress}%`,
                             backgroundColor: 'white', 
-                        })
+                        });
                     }
                 },
                 onComplete: () => {
                     if(isPlaying){
                         gsap.to(videoDivRef.current[videoId],{
-                            width: '12px'
-                        })
+                            width: '12px',
+                        });
                         gsap.to(span[videoId],{
-                            backgroundColor: '#afafaf'                            
-                        })
+                            backgroundColor: '#afafaf' ,                           
+                        });
                     }
-                }
-            })
+                },
+            });
             if(videoId === 0) {
                 anim.restart();
             }
             
+            // animation部分-----------------------
             const animUpdate = () => {
                 anim.progress(videoRef.current[videoId]
-                    / hightlightsSlides[videoId].videoDuration )
-            }
+                    / hightlightsSlides[videoId].videoDuration );
+            };
             
             if(isPlaying){
                 gsap.ticker.add(animUpdate);
