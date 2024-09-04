@@ -42,11 +42,11 @@ const VideoCarousel = () => {
             toggleActions: "restart none none none",
             },
             onComplete: () => {
-            setVideo((pre) => ({
-                ...pre,
-                startPlay: true,
-                isPlaying: true,
-            }));
+                setVideo((pre) => ({
+                    ...pre,
+                    startPlay: true,
+                    isPlaying: true,
+                }));
             },
         });
         }, [isEnd, videoId]);
@@ -167,6 +167,11 @@ const VideoCarousel = () => {
                                             ...preVideo,isPlaying: true
                                         }))
                                     }}
+                                    onEnded={() =>
+                                        i !== 3
+                                          ? handleProcess("video-end", i)
+                                          : handleProcess("video-last")
+                                      }
                                     onLoadedMetadata={(e) => 
                                         handleLoadedMetadata(i,e)
                                     }
